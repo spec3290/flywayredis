@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3307/study
+    username: study
+    password: study
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  config:
+    import: optional:file:.env[.properties]

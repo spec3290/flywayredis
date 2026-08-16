@@ -1,4 +1,4 @@
-package com.example.flywayredis.domain;
+package com.example.flywayredis.domain.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;

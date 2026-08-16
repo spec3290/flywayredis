@@ -1,5 +1,2 @@
 ALTER TABLE item
-    ADD quantity BIGINT NULL;
-
-ALTER TABLE item
-    MODIFY quantity BIGINT NOT NULL;
+    ADD COLUMN quantity BIGINT NOT NULL DEFAULT 0;

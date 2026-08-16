@@ -1,6 +1,5 @@
-package com.example.flywayredis.domain;
+package com.example.flywayredis.domain.item;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record ItemResponseDto(Long id, String name, int price, LocalDateTime createdAt) {

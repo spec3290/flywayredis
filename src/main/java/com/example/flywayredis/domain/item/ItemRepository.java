@@ -1,4 +1,4 @@
-package com.example.flywayredis.domain;
+package com.example.flywayredis.domain.item;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

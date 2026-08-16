@@ -1,0 +1,30 @@
+# Version control
+.git
+.gitattributes
+
+# Local Gradle output and caches
+.gradle
+build
+**/build
+
+# IDE and editor files
+.idea
+.vscode
+*.iml
+*.iws
+*.ipr
+out
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+
+# Files that are not needed to build the application image
+HELP.md
+docker-compose*.yml

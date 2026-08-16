@@ -1,4 +1,4 @@
-package com.example.flywayredis.domain;
+package com.example.flywayredis.domain.item;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

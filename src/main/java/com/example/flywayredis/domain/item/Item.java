@@ -1,4 +1,4 @@
-package com.example.flywayredis.domain;
+package com.example.flywayredis.domain.item;
 
 import jakarta.persistence.*;
 import lombok.Getter;
