@@ -1,0 +1,5 @@
+ALTER TABLE item
+    ADD quantity BIGINT NULL;
+
+ALTER TABLE item
+    MODIFY quantity BIGINT NOT NULL;
