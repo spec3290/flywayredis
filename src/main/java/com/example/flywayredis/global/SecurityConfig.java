@@ -16,11 +16,18 @@ public class SecurityConfig {
                                 "/auth/login",
                                 "/oauth2/**",
                                 "/login/**",
-                                "/error"
+                                "/error",
+                                "/chat-rooms/**",
+                                "/ws-chat"
                         ).permitAll()
                         .requestMatchers("/auth/me").authenticated()
                         .anyRequest().permitAll()
                 )
+                .csrf(csrf -> csrf.ignoringRequestMatchers(
+                        "/chat-rooms/**",
+                        "/products/**",
+                        "/ws-chat/**"
+                ))
                 .oauth2Login(oauth2 -> oauth2
                         .defaultSuccessUrl("/auth/me", true)
                 )

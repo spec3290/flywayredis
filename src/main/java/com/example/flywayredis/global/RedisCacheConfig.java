@@ -1,6 +1,6 @@
 package com.example.flywayredis.global;
 
-import com.example.flywayredis.domain.item.ItemResponseDto;
+import com.example.flywayredis.domain.product.ProductResponseDto;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,10 +26,10 @@ public class RedisCacheConfig {
         StringRedisSerializer keySerializer =
                 new StringRedisSerializer();
 
-        JacksonJsonRedisSerializer<ItemResponseDto> valueSerializer =
+        JacksonJsonRedisSerializer<ProductResponseDto> valueSerializer =
                 new JacksonJsonRedisSerializer<>(
                         objectMapper,
-                        ItemResponseDto.class
+                        ProductResponseDto.class
                 );
 
         RedisCacheConfiguration defaultConfiguration =
@@ -39,7 +39,7 @@ public class RedisCacheConfig {
                                         .fromSerializer(keySerializer)
                         )
                         .disableCachingNullValues();
-        RedisCacheConfiguration itemCacheConfiguration =
+        RedisCacheConfiguration productCacheConfiguration =
                 defaultConfiguration
                         .entryTtl(Duration.ofMinutes(10))
                         .serializeValuesWith(
@@ -49,8 +49,8 @@ public class RedisCacheConfig {
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(defaultConfiguration)
                 .withCacheConfiguration(
-                        "item",
-                        itemCacheConfiguration
+                        "product",
+                        productCacheConfiguration
                 )
                 .disableCreateOnMissingCache()
                 .build();

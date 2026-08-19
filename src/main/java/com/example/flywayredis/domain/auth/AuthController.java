@@ -11,10 +11,13 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @GetMapping("/login")
+    @GetMapping("/oauth2/login")
     public RedirectView login() {
         return new RedirectView("/oauth2/authorization/github");
     }
+
+
+
 
     @GetMapping("/me")
     public GitHubUserResponse me(@AuthenticationPrincipal OAuth2User user) {
