@@ -10,7 +10,51 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    test:
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: study
+          MYSQL_USER: study
+          MYSQL_PASSWORD: study
+        ports:
+          - 3307:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+          --health-start-period=20s
+
+      redis:
+        image: redis:7.4-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      SPRING_PROFILES_ACTIVE: local
+
+      SPRING_DATASOURCE_URL: "jdbc:mysql://127.0.0.1:3307/study?serverTimezone=Asia/Seoul&characterEncoding=UTF-8"
+      SPRING_DATASOURCE_USERNAME: study
+      SPRING_DATASOURCE_PASSWORD: study
+
+      SPRING_DATA_REDIS_HOST: 127.0.0.1
+      SPRING_DATA_REDIS_PORT: 6379
+
+      # Flyway가 만든 테이블과 Entity가 일치하는지 검사
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+
+      # 실제 GitHub OAuth 인증에는 사용하지 않는 테스트용 값
+      GITHUB_CLIENT_ID: ci-test-client
+      GITHUB_CLIENT_SECRET: ci-test-secret
+
+    steps:
       - name: 코드 가져오기
         uses: actions/checkout@v4
 
@@ -18,11 +62,19 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: "21"
           cache: gradle
 
       - name: Gradle 실행 권한 부여
         run: chmod +x gradlew
 
-      - name: 테스트 실행
-        run: ./gradlew test
+      - name: 전체 테스트 실행
+        run: ./gradlew test --stacktrace
+
+      - name: 테스트 결과 보관
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: build/reports/tests/test/
+          if-no-files-found: ignore
