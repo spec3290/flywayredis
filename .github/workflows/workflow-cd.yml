@@ -25,16 +25,43 @@ jobs:
           SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
+          set -euo pipefail
+
+          for name in SSH_HOST SSH_USER SSH_PRIVATE_KEY SSH_KNOWN_HOSTS DEPLOY_PATH; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::$name is missing or empty"
+              exit 1
+            fi
+          done
+
+          if [[ ! "$SSH_HOST" =~ ^[A-Za-z0-9.-]+$ ]]; then
+            echo "::error::SSH_HOST must contain only an IP or hostname"
+            exit 1
+          fi
+
+          if [[ ! "$SSH_USER" =~ ^[A-Za-z_][A-Za-z0-9_-]*$ ]]; then
+            echo "::error::SSH_USER has an invalid format"
+            exit 1
+          fi
+
           install -d -m 700 ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" > "$RUNNER_TEMP/deploy_key"
+
+          printf '%s\n' "$SSH_PRIVATE_KEY" |
+            tr -d '\r' > "$RUNNER_TEMP/deploy_key"
           chmod 600 "$RUNNER_TEMP/deploy_key"
-          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+          printf '%s\n' "$SSH_KNOWN_HOSTS" |
+            tr -d '\r' > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-          ssh -i "$RUNNER_TEMP/deploy_key" \
-            -o StrictHostKeyChecking=yes \
-            "$SSH_USER@$SSH_HOST" \
-            "cd \"$DEPLOY_PATH\" && \
-             git pull --ff-only origin main && \
-             docker compose --env-file .env.prod -f docker-compose.prod.yml config --quiet && \
-             docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build --remove-orphans"
+          if ! ssh-keygen -y -f "$RUNNER_TEMP/deploy_key" >/dev/null; then
+            echo "::error::SSH_PRIVATE_KEY is not a valid private key"
+            exit 1
+          fi
+
+          if ! ssh-keygen -F "$SSH_HOST" -f ~/.ssh/known_hosts >/dev/null; then
+            echo "::error::SSH_KNOWN_HOSTS does not contain SSH_HOST"
+            exit 1
+          fi
+
+          ssh -v -i "$RUNNER_TEMP/deploy_key" -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=15 "${SSH_USER}@${SSH_HOST}" "cd '$DEPLOY_PATH' && git pull --ff-only origin main && docker compose --env-file .env.prod -f docker-compose.prod.yml config --quiet && docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build --remove-orphans"
