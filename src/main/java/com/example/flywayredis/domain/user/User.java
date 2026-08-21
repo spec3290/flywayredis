@@ -51,4 +51,12 @@ public class User {
 
     @OneToMany(mappedBy = "sender")
     private final List<Message> sentMessages = new ArrayList<>();
+
+    public static User create(String nickname, String email, String encodedPassword) {
+        User user = new User();
+        user.nickname = nickname;
+        user.email = email;
+        user.password = encodedPassword;
+        return user;
+    }
 }
