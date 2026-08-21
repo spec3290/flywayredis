@@ -14,7 +14,7 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    environment: production
+    environment: FLYWAYREDIS
 
     steps:
       - name: 서버에 배포
