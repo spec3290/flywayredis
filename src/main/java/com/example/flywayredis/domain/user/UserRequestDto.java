@@ -1,4 +1,6 @@
 package com.example.flywayredis.domain.user;
 
-public record UserRequestDto() {
+import jakarta.validation.constraints.NotBlank;
+
+public record UserRequestDto(@NotBlank String nickname, @NotBlank String email, @NotBlank String password) {
 }
