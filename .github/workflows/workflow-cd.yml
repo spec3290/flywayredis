@@ -110,5 +110,5 @@ jobs:
             "cd '$DEPLOY_PATH' && \
              git pull --ff-only origin main && \
              DOCKERHUB_USERNAME='$DOCKERHUB_USERNAME' APP_VERSION='$IMAGE_TAG' docker compose --env-file .env.prod -f docker-compose.prod.yml config --quiet && \
-             DOCKERHUB_USERNAME='$DOCKERHUB_USERNAME' APP_VERSION='$IMAGE_TAG' docker compose --env-file .env.prod -f docker-compose.prod.yml pull app && \
+             DOCKERHUB_USERNAME='$DOCKERHUB_USERNAME' APP_VERSION='$IMAGE_TAG' docker compose --env-file .env.prod -f docker-compose.prod.yml pull app nginx && \
              DOCKERHUB_USERNAME='$DOCKERHUB_USERNAME' APP_VERSION='$IMAGE_TAG' docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --no-build --remove-orphans"
