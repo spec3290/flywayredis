@@ -2,10 +2,7 @@ name: flywayredis-prod
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: flywayredis:${APP_VERSION:-latest}
+    image: ${DOCKERHUB_USERNAME:?DOCKERHUB_USERNAME is required}/flywayredis:${APP_VERSION:-latest}
     restart: unless-stopped
     ports:
       - "${APP_PORT:-8080}:8080"
