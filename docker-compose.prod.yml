@@ -2,7 +2,7 @@ name: flywayredis-prod
 
 services:
   app:
-    image: ${DOCKERHUB_USERNAME:?DOCKERHUB_USERNAME is required}/flywayredis:${APP_VERSION:-latest}
+    image: "${DOCKERHUB_USERNAME}/flywayredis:${APP_VERSION:-latest}"
     restart: unless-stopped
     ports:
       - "${APP_PORT:-8080}:8080"
@@ -15,6 +15,7 @@ services:
       REDIS_PORT: 6379
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:?GITHUB_CLIENT_ID is required}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:?GITHUB_CLIENT_SECRET is required}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
     depends_on:
       mysql:
         condition: service_healthy
