@@ -1,5 +1,7 @@
 package com.example.flywayredis.global.response;
 
+import com.example.flywayredis.global.BusinessException;
+import com.example.flywayredis.global.error.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException exception) {
+        ErrorCode errorCode = exception.getErrorcode();
+        ApiResponse<Void> response = ApiResponse.error(errorCode.getCode(), errorCode.getMessage());
+        return ResponseEntity.status(errorCode.getStatus())
+                .body(response);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidation(MethodArgumentNotValidException exception) {
