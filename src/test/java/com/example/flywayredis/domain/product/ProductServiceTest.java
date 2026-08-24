@@ -2,6 +2,7 @@ package com.example.flywayredis.domain.product;
 
 import com.example.flywayredis.domain.user.User;
 import com.example.flywayredis.domain.user.UserRepository;
+import com.example.flywayredis.global.BusinessException;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -52,6 +53,6 @@ class ProductServiceTest {
 
         when(productRepository.findById(999L)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> productService.getProduct(999L));
+        assertThrows(BusinessException.class, () -> productService.getProduct(999L));
     }
 }
