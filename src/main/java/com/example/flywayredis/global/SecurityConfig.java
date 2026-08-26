@@ -1,5 +1,6 @@
 package com.example.flywayredis.global;
 
+import com.example.flywayredis.domain.auth.OAuth2LoginSuccessHandler;
 import com.example.flywayredis.global.response.ApiResponse;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,21 +26,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper,
+            OAuth2LoginSuccessHandler oauth2LoginSuccessHandler,
+            CookieBearerTokenResolver cookieBearerTokenResolver
     ) throws Exception {
         return http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/me", "/auth/token/me").authenticated()
-                        .anyRequest().permitAll()
+                        .requestMatchers(
+                                "/auth/login",
+                                "/auth/refresh",
+                                "/auth/logout",
+                                "/auth/join",
+                                "/auth/csrf",
+                                "/auth/oauth2/login",
+                                "/oauth2/**",
+                                "/login/**"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
+                        .anyRequest().authenticated()
                 )
-                .csrf(csrf -> csrf.ignoringRequestMatchers(
-                        "/auth/login",
-                        "/auth/refresh",
-                        "/auth/join",
-                        "/chat-rooms/**",
-                        "/products/**",
-                        "/ws-chat/**"
-                ))
+                .csrf(csrf -> csrf.spa())
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, exception) -> writeSecurityError(
                                 response,
@@ -55,10 +62,11 @@ public class SecurityConfig {
                                 "접근 권한이 없습니다."
                         ))
                 )
-                .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl("/auth/me", true)
+                .oauth2Login(oauth2 -> oauth2.successHandler(oauth2LoginSuccessHandler))
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .bearerTokenResolver(cookieBearerTokenResolver)
+                        .jwt(Customizer.withDefaults())
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .build();
     }
 
