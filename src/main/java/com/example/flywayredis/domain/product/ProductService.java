@@ -25,9 +25,9 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponseDto createProduct(ProductRequestDto request) {
+    public ProductResponseDto createProduct(Long loginUserId, ProductRequestDto request) {
         validateRequest(request);
-        User seller = userRepository.findById(request.sellerId())
+        User seller = userRepository.findById(loginUserId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         Product product = productRepository.save(Product.create(seller, request));
@@ -36,21 +36,21 @@ public class ProductService {
 
     @Transactional
     @CacheEvict(cacheNames = "product", key = "#id")
-    public ProductResponseDto updateProduct(Long id, ProductRequestDto request) {
+    public ProductResponseDto updateProduct(Long loginUserId, Long id, ProductRequestDto request) {
         validateRequest(request);
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));;
-        validateSeller(product, request.sellerId());
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
+        validateSeller(product, loginUserId);
         product.update(request);
         return ProductResponseDto.from(product);
     }
 
     @Transactional
     @CacheEvict(cacheNames = "product", key = "#id")
-    public void deleteProduct(Long id, Long sellerId) {
+    public void deleteProduct(Long loginUserId, Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
-        validateSeller(product, sellerId);
+        validateSeller(product, loginUserId);
         productRepository.delete(product);
     }
 
@@ -61,10 +61,7 @@ public class ProductService {
     }
 
     private void validateRequest(ProductRequestDto request) {
-        if (request == null || request.sellerId() == null) {
-            throw new IllegalArgumentException("판매자 ID는 필수입니다.");
-        }
-        if (request.title() == null || request.title().isBlank()) {
+        if (request == null || request.title() == null || request.title().isBlank()) {
             throw new IllegalArgumentException("상품 제목은 필수입니다.");
         }
         if (request.price() == null || request.price() < 0) {
