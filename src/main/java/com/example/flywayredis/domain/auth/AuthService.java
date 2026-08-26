@@ -60,4 +60,8 @@ public class AuthService {
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + userId));
         return UserResponseDto.from(user);
     }
+
+    public void logout(String refreshToken) {
+        jwtTokenService.revokeRefreshToken(refreshToken);
+    }
 }

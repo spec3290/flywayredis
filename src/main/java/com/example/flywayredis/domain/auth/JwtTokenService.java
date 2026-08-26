@@ -99,6 +99,15 @@ public class JwtTokenService {
         }
     }
 
+    public void revokeRefreshToken(String refreshToken) {
+        try {
+            Jwt jwt = refreshTokenJwtDecoder.decode(refreshToken);
+            refreshTokenStore.consume(jwt.getId());
+        } catch (JwtException ignored) {
+            // 로그아웃은 쿠키 삭제가 목적이므로 이미 만료되거나 잘못된 토큰도 성공 처리합니다.
+        }
+    }
+
     private String encode(JwtClaimsSet claims) {
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256)
                 .type("JWT")
