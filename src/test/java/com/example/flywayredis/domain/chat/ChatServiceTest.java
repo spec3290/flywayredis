@@ -54,7 +54,7 @@ class ChatServiceTest {
         when(savedMessage.getContent()).thenReturn("안녕하세요");
         when(savedMessage.getCreatedAt()).thenReturn(createdAt);
 
-        ChatMessageResponse result = chatService.sendMessage(1L, new ChatMessageRequest(10L, " 안녕하세요 "));
+        ChatMessageResponse result = chatService.sendMessage(10L, 1L, new ChatMessageRequest(" 안녕하세요 "));
 
         assertEquals(100L, result.id());
         assertEquals(1L, result.roomId());
@@ -91,7 +91,7 @@ class ChatServiceTest {
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> chatService.sendMessage(1L, new ChatMessageRequest(30L, "안녕하세요"))
+                () -> chatService.sendMessage(30L, 1L, new ChatMessageRequest("안녕하세요"))
         );
     }
 }

@@ -10,11 +10,33 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ProductServiceTest {
+
+    @Test
+    void 상품_생성자는_요청값이_아니라_로그인_사용자를_사용한다() {
+        ProductRepository productRepository = mock(ProductRepository.class);
+        UserRepository userRepository = mock(UserRepository.class);
+        ProductService productService = new ProductService(productRepository, userRepository);
+        User loginUser = mock(User.class);
+
+        when(loginUser.getId()).thenReturn(10L);
+        when(userRepository.findById(10L)).thenReturn(Optional.of(loginUser));
+        when(productRepository.save(any(Product.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        ProductResponseDto result = productService.createProduct(
+                10L,
+                new ProductRequestDto("키보드", "기계식", 24_000, "AVAILABLE")
+        );
+
+        assertEquals(10L, result.sellerId());
+        verify(userRepository).findById(10L);
+    }
 
     @Test
     void 상품을_Id로_조회한다() {
