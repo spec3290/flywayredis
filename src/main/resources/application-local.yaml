@@ -17,3 +17,7 @@ server:
 
 jwt:
   secret: ${JWT_SECRET:local-development-only-jwt-secret-key-change-me}
+
+app:
+  auth:
+    cookie-secure: false
