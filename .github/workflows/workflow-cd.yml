@@ -121,17 +121,18 @@ jobs:
           docker compose --env-file .env.prod -f docker-compose.prod.yml pull app nginx
           docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --no-build --remove-orphans
 
-          for attempt in \$(seq 1 45); do
-            if curl --fail --silent --show-error http://127.0.0.1:8080/actuator/health >/dev/null; then
-              echo "Application health check passed"
-              exit 0
-            fi
-            sleep 2
+          for attempt in $(seq 1 90); do
+          if curl --fail --silent --show-error http://127.0.0.1:8080/actuator/health >/dev/null 2>&1; then
+          echo "Application health check passed on attempt $attempt"
+          exit 0
+          fi
+          echo "Health check attempt $attempt/90 - waiting for application..."
+          sleep 2
           done
-
-          echo "Application health check failed" >&2
+          
+          echo "Application health check failed after 180 seconds" >&2
           docker compose --env-file .env.prod -f docker-compose.prod.yml ps >&2
-          docker compose --env-file .env.prod -f docker-compose.prod.yml logs --tail 100 app nginx >&2
+          docker compose --env-file .env.prod -f docker-compose.prod.yml logs --tail 200 app nginx >&2
           exit 1
           EOF
           )
