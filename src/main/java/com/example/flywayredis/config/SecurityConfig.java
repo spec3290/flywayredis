@@ -42,7 +42,8 @@ public class SecurityConfig {
                                 "/auth/csrf",
                                 "/auth/oauth2/login",
                                 "/oauth2/**",
-                                "/login/**"
+                                "/login/**",
+                                "/actuator/health/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
                         .anyRequest().authenticated()
