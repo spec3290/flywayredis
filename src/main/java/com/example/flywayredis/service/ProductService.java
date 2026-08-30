@@ -10,6 +10,7 @@ import com.example.flywayredis.repository.UserRepository;
 import com.example.flywayredis.common.exception.BusinessException;
 import com.example.flywayredis.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class ProductService {
     }
 
     @Transactional
-    @CacheEvict(cacheNames = "product", key = "#id")
+    @CachePut(cacheNames = "product", key = "#id")
     public ProductResponseDto updateProduct(Long loginUserId, Long id, ProductRequestDto request) {
         validateRequest(request);
         Product product = productRepository.findById(id)
