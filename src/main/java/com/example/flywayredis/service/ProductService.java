@@ -16,12 +16,21 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+
+    @Transactional(readOnly = true)
+    public List<ProductResponseDto> getProducts() {
+        return productRepository.findAllByOrderByCreatedAtDesc().stream()
+                .map(ProductResponseDto::from)
+                .toList();
+    }
 
     @Cacheable(cacheNames = "product", key = "#id")
     public ProductResponseDto getProduct(Long id) {

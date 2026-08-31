@@ -11,12 +11,20 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/products")
 public class ProductController {
 
     private final ProductService productService;
+
+    @Operation(summary = "상품 목록 조회 API", description = "최신 상품부터 전체 목록을 조회합니다.")
+    @GetMapping
+    public ApiResponse<List<ProductResponseDto>> getProducts() {
+        return ApiResponse.success(productService.getProducts());
+    }
 
     @Operation(summary = "상품 조회 API", description = "상품 조회 결과가 Redis 캐시에 저장됩니다.")
     @GetMapping("/{id}")
