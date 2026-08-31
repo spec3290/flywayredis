@@ -17,6 +17,8 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
@@ -75,7 +77,7 @@ public class JwtTokenService {
 
         String accessToken = encode(accessTokenClaims);
         String refreshToken = encode(refreshTokenClaims);
-        refreshTokenStore.save(refreshTokenId, user.getId(), refreshTokenExpiration);
+        refreshTokenStore.save(refreshTokenId, refreshToken, refreshTokenExpiration);
 
         return new TokenResponse(
                 accessToken,
@@ -91,9 +93,9 @@ public class JwtTokenService {
         try {
             Jwt jwt = refreshTokenJwtDecoder.decode(refreshToken);
             Long subjectUserId = Long.valueOf(jwt.getSubject());
-            Long storedUserId = refreshTokenStore.consume(jwt.getId());
+            String storedRefreshToken = refreshTokenStore.consume(jwt.getId());
 
-            if (storedUserId == null || !storedUserId.equals(subjectUserId)) {
+            if (!matches(storedRefreshToken, refreshToken)) {
                 throw new IllegalArgumentException("이미 사용되었거나 만료된 리프레시 토큰입니다.");
             }
             return subjectUserId;
@@ -116,5 +118,12 @@ public class JwtTokenService {
                 .type("JWT")
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
+    }
+
+    private boolean matches(String storedToken, String presentedToken) {
+        return storedToken != null && MessageDigest.isEqual(
+                storedToken.getBytes(StandardCharsets.UTF_8),
+                presentedToken.getBytes(StandardCharsets.UTF_8)
+        );
     }
 }

@@ -14,16 +14,15 @@ public class RefreshTokenStore {
 
     private final StringRedisTemplate redisTemplate;
 
-    public void save(String tokenId, Long userId, Duration expiration) {
+    public void save(String tokenId, String refreshToken, Duration expiration) {
         redisTemplate.opsForValue().set(
                 KEY_PREFIX + tokenId,
-                userId.toString(),
+                refreshToken,
                 expiration
         );
     }
 
-    public Long consume(String tokenId) {
-        String userId = redisTemplate.opsForValue().getAndDelete(KEY_PREFIX + tokenId);
-        return userId != null ? Long.valueOf(userId) : null;
+    public String consume(String tokenId) {
+        return redisTemplate.opsForValue().getAndDelete(KEY_PREFIX + tokenId);
     }
 }
