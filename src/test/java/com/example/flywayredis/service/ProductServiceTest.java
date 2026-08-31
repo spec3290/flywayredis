@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,6 +22,29 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ProductServiceTest {
+
+    @Test
+    void 상품_목록을_최신순으로_조회한다() {
+        ProductRepository productRepository = mock(ProductRepository.class);
+        UserRepository userRepository = mock(UserRepository.class);
+        ProductService productService = new ProductService(productRepository, userRepository);
+        Product product = mock(Product.class);
+        User seller = mock(User.class);
+
+        when(product.getId()).thenReturn(1L);
+        when(product.getSeller()).thenReturn(seller);
+        when(seller.getId()).thenReturn(10L);
+        when(product.getTitle()).thenReturn("키보드");
+        when(product.getPrice()).thenReturn(24_000);
+        when(product.getStatus()).thenReturn("AVAILABLE");
+        when(productRepository.findAllByOrderByCreatedAtDesc()).thenReturn(List.of(product));
+
+        List<ProductResponseDto> result = productService.getProducts();
+
+        assertEquals(1, result.size());
+        assertEquals("키보드", result.getFirst().title());
+        verify(productRepository).findAllByOrderByCreatedAtDesc();
+    }
 
     @Test
     void 상품_생성자는_요청값이_아니라_로그인_사용자를_사용한다() {

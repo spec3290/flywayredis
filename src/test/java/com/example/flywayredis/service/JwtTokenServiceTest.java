@@ -65,9 +65,9 @@ class JwtTokenServiceTest {
         assertThat(accessToken.getClaimAsString("nickname")).isEqualTo("buyer");
         assertThat(refreshToken.getSubject()).isEqualTo("2");
         assertThat(refreshToken.getClaimAsString("token_type")).isEqualTo("REFRESH");
-        verify(refreshTokenStore).save(refreshToken.getId(), 2L, Duration.ofDays(14));
+        verify(refreshTokenStore).save(refreshToken.getId(), response.refreshToken(), Duration.ofDays(14));
 
-        when(refreshTokenStore.consume(refreshToken.getId())).thenReturn(2L);
+        when(refreshTokenStore.consume(refreshToken.getId())).thenReturn(response.refreshToken());
         assertThat(tokenService.consumeRefreshToken(response.refreshToken())).isEqualTo(2L);
     }
 }
