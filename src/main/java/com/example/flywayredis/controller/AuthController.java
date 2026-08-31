@@ -75,7 +75,13 @@ public class AuthController {
     }
 
     @GetMapping("/csrf")
-    public ApiResponse<Void> csrf(CsrfToken csrfToken) {
-        return ApiResponse.success(null);
+    public ApiResponse<CsrfTokenResponse> csrf(CsrfToken csrfToken) {
+        return ApiResponse.success(new CsrfTokenResponse(
+                csrfToken.getToken(),
+                csrfToken.getHeaderName()
+        ));
+    }
+
+    public record CsrfTokenResponse(String token, String headerName) {
     }
 }
