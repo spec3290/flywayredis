@@ -43,15 +43,6 @@ public class User {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "seller")
-    private final List<Product> sellingProducts = new ArrayList<>();
-
-    @OneToMany(mappedBy = "buyer")
-    private final List<ChatRoom> chatRooms = new ArrayList<>();
-
-    @OneToMany(mappedBy = "sender")
-    private final List<Message> sentMessages = new ArrayList<>();
-
     public static User create(String nickname, String email, String encodedPassword) {
         User user = new User();
         user.nickname = nickname;

@@ -33,9 +33,8 @@ public class Message {
     @JoinColumn(name = "room_id", nullable = false)
     private ChatRoom chatRoom;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "sender_id", nullable = false)
-    private User sender;
+    @Column(name = "sender_id", nullable = false)
+    private Long senderId;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
@@ -47,7 +46,7 @@ public class Message {
     public static Message create(ChatRoom chatRoom, User sender, String content) {
         Message message = new Message();
         message.chatRoom = chatRoom;
-        message.sender = sender;
+        message.senderId = sender.getId();
         message.content = content;
         return message;
     }

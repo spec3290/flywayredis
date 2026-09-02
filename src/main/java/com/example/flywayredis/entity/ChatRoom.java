@@ -37,9 +37,8 @@ public class ChatRoom {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "buyer_id", nullable = false)
-    private User buyer;
+    @Column(name = "buyer_id", nullable = false)
+    private Long buyerId;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -51,7 +50,7 @@ public class ChatRoom {
     public static ChatRoom create(Product product, User buyer) {
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.product = product;
-        chatRoom.buyer = buyer;
+        chatRoom.buyerId = buyer.getId();
         return chatRoom;
     }
 }
