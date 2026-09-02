@@ -39,7 +39,7 @@ public class ChatService {
         User buyer = userRepository.findById(loginUserId)
                 .orElseThrow(() -> new IllegalArgumentException("구매자를 찾을 수 없습니다: " + loginUserId));
 
-        if (Objects.equals(product.getSeller().getId(), buyer.getId())) {
+        if (Objects.equals(product.getSellerId(), buyer.getId())) {
             throw new IllegalArgumentException("판매자는 자신의 상품에 채팅방을 만들 수 없습니다.");
         }
 
@@ -95,8 +95,8 @@ public class ChatService {
     }
 
     private boolean isParticipant(ChatRoom chatRoom, Long userId) {
-        return Objects.equals(chatRoom.getBuyer().getId(), userId)
-                || Objects.equals(chatRoom.getProduct().getSeller().getId(), userId);
+        return Objects.equals(chatRoom.getBuyerId(), userId)
+                || Objects.equals(chatRoom.getProduct().getSellerId(), userId);
     }
 
 }

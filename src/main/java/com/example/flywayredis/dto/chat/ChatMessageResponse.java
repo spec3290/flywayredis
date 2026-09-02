@@ -15,7 +15,7 @@ public record ChatMessageResponse(
         return new ChatMessageResponse(
                 message.getId(),
                 message.getChatRoom().getId(),
-                message.getSender().getId(),
+                message.getSenderId(),
                 message.getContent(),
                 message.getCreatedAt()
         );

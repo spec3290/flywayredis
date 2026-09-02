@@ -16,7 +16,7 @@ public record ProductResponseDto(
     public static ProductResponseDto from(Product product) {
         return new ProductResponseDto(
                 product.getId(),
-                product.getSeller().getId(),
+                product.getSellerId(),
                 product.getTitle(),
                 product.getContent(),
                 product.getPrice(),

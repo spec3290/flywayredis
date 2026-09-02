@@ -32,7 +32,7 @@ class ProductServiceTest {
         User seller = mock(User.class);
 
         when(product.getId()).thenReturn(1L);
-        when(product.getSeller()).thenReturn(seller);
+        when(product.getSellerId()).thenReturn(1L);
         when(seller.getId()).thenReturn(10L);
         when(product.getTitle()).thenReturn("키보드");
         when(product.getPrice()).thenReturn(24_000);
@@ -77,7 +77,7 @@ class ProductServiceTest {
         LocalDateTime createdAt = LocalDateTime.of(2026, 8, 16, 12, 0);
 
         when(product.getId()).thenReturn(1L);
-        when(product.getSeller()).thenReturn(seller);
+        when(product.getSellerId()).thenReturn(1L);
         when(seller.getId()).thenReturn(10L);
         when(product.getTitle()).thenReturn("키보드");
         when(product.getContent()).thenReturn("기계식 키보드입니다.");

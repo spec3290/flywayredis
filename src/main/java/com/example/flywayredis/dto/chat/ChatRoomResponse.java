@@ -15,8 +15,8 @@ public record ChatRoomResponse(
         return new ChatRoomResponse(
                 chatRoom.getId(),
                 chatRoom.getProduct().getId(),
-                chatRoom.getBuyer().getId(),
-                chatRoom.getProduct().getSeller().getId(),
+                chatRoom.getBuyerId(),
+                chatRoom.getProduct().getSellerId(),
                 chatRoom.getCreatedAt()
         );
     }

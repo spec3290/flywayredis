@@ -70,7 +70,7 @@ public class ProductService {
     }
 
     private void validateSeller(Product product, Long sellerId) {
-        if (sellerId == null || !product.getSeller().getId().equals(sellerId)) {
+        if (sellerId == null || !product.getSellerId().equals(sellerId)) {
             throw new BusinessException(ErrorCode.NOT_SELLER_OF_PRODUCT);
         }
     }
