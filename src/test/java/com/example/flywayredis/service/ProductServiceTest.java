@@ -32,7 +32,7 @@ class ProductServiceTest {
         User seller = mock(User.class);
 
         when(product.getId()).thenReturn(1L);
-        when(product.getSellerId()).thenReturn(1L);
+        when(product.getSellerId()).thenReturn(10L);
         when(seller.getId()).thenReturn(10L);
         when(product.getTitle()).thenReturn("키보드");
         when(product.getPrice()).thenReturn(24_000);
